@@ -103,10 +103,10 @@ class Dropdown(Widget):
 
     def item_enabled(self, item):
         """Returns whether the given item is enabled.
-        
+
         Args:
             item: Name of the item.
-        
+
         Returns:
             Boolean - True if enabled, False if not.
         """
@@ -117,11 +117,11 @@ class Dropdown(Widget):
 
     def item_select(self, item, handle_alert=None):
         """Opens the dropdown and selects the desired item.
-        
+
         Args:
             item: Item to be selected
             handle_alert: How to handle alerts. None - no handling, True - confirm, False - dismiss.
-        
+
         Raises:
             DropdownItemDisabled
         """

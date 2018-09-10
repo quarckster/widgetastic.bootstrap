@@ -68,7 +68,6 @@ class Button(Widget, ClickableMixin):
         if self.locator_conditions:
             self.locator_conditions = "and ({})".format(self.locator_conditions)
 
-    # TODO: Handle input value the same way as text for other tags
     def __locator__(self):
         return (
             './/*[(self::a or self::button or (self::input and (@type="button" or @type="submit")))'
