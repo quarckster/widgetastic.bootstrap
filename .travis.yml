@@ -1,0 +1,15 @@
+dist: trusty
+addons:
+  chrome: stable
+language: python
+python:
+  - "3.4"
+  - "3.5"
+  - "3.6"
+before_install: pip install flake8 chromedriver_installer pytest pytest-allure-adaptor pytest-localserver pytest-cov coveralls
+install: python setup.py install
+script:
+  - flake8 src testing --max-line-length=100
+  - py.test -v --cov widgetastic_bootstrap --cov-report term-missing --alluredir allure/
+after_success:
+  - coveralls
