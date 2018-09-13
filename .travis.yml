@@ -1,12 +1,18 @@
 dist: trusty
 addons:
   chrome: stable
+  firefox: latest
 language: python
 python:
   - "3.4"
   - "3.5"
   - "3.6"
-before_install: pip install flake8 chromedriver_installer pytest pytest-allure-adaptor pytest-localserver pytest-cov coveralls
+env:
+  - BROWSER=chrome
+  - BROWSER=firefox
+before_install:
+  - pip install flake8 webdriverdownloader pytest pytest-allure-adaptor pytest-localserver pytest-cov coveralls
+  - webdriverdownloader chrome firefox
 install: python setup.py install
 script:
   - flake8 src testing --max-line-length=100
