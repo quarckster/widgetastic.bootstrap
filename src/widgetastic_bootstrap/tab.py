@@ -16,9 +16,10 @@ class Tab(View):
     TAB_NAME = None
 
     #: Locator of the Tab selector
-    TAB_LOCATOR = ParametrizedLocator(
+    ROOT = ParametrizedLocator(
         './/ul[contains(@class, "nav-tabs") or contains(@class, "nav-pills")]'
-        '/li/a[normalize-space(.)={@tab_name|quote}]')
+        '/li[./a[normalize-space(.)={@tab_name|quote}]]')
+    NAV_LINK = "./a[contains(@class, 'nav-link')]"
 
     @property
     def tab_name(self):
@@ -26,18 +27,14 @@ class Tab(View):
 
     @property
     def is_active(self):
-        return "active" in self.parent_browser.classes(self.TAB_LOCATOR)
+        return "active" in self.browser.classes(self.NAV_LINK)
 
     @property
     def is_disabled(self):
-        return "disabled" in self.parent_browser.classes(self.TAB_LOCATOR)
-
-    @property
-    def is_displayed(self):
-        return self.parent_browser.is_displayed(self.TAB_LOCATOR)
+        return "disabled" in self.browser.classes(self.NAV_LINK)
 
     def click(self):
-        return self.parent_browser.click(self.TAB_LOCATOR)
+        return self.browser.click(self)
 
     def select(self):
         if not self.is_active:
@@ -64,17 +61,12 @@ class GenericTabWithDropdown(Tab):
     DROPDOWN = "./div/a[normalize-space(.)={}]"
 
     @property
-    def _parent_classes(self):
-        parent = self.parent_browser.element(self.TAB_LOCATOR)
-        return self.parent_browser.classes("./parent::li", parent=parent)
-
-    @property
     def is_dropdown(self):
-        return "dropdown" in self._parent_classes
+        return "dropdown" in self.browser.classes(self)
 
     @property
     def is_open(self):
-        return "show" in self._parent_classes
+        return "show" in self.browser.classes(self)
 
     def open(self):
         if not self.is_open:
@@ -90,10 +82,8 @@ class GenericTabWithDropdown(Tab):
         if not self.is_dropdown:
             raise TypeError("{} is not a tab with dropdown and CHECK_IF_DROPDOWN is True")
         self.open()
-        el = self.parent_browser.element(self.TAB_LOCATOR)
-        parent = self.parent_browser.element("./parent::li", parent=el)
         self.logger.info("clicking the sub-item %r", sub_item)
-        self.parent_browser.click(self.DROPDOWN.format(quote(sub_item)), parent=parent)
+        self.browser.click(self.DROPDOWN.format(quote(sub_item)))
 
     def child_widget_accessed(self, widget):
         """Nothing. Since we don't know which sub_item."""

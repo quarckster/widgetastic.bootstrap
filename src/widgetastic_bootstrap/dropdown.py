@@ -39,8 +39,7 @@ class Dropdown(Widget):
     @property
     def is_enabled(self):
         """Returns if the dropdown itself is enabled and therefore interactive."""
-        button = self.browser.element(self.BUTTON_LOCATOR)
-        return "disabled" not in self.browser.classes(button)
+        return "disabled" not in self.browser.classes(self.BUTTON_LOCATOR)
 
     def _verify_enabled(self):
         if not self.is_enabled:
@@ -53,8 +52,7 @@ class Dropdown(Widget):
     def open(self):
         self._verify_enabled()
         if not self.is_open:
-            button = self.browser.element(self.BUTTON_LOCATOR)
-            self.browser.click(button)
+            self.browser.click(self.BUTTON_LOCATOR)
 
     def close(self, ignore_nonpresent=False):
         """Close the dropdown
@@ -75,8 +73,7 @@ class Dropdown(Widget):
     @property
     def items(self):
         """Returns a list of all dropdown items as strings."""
-        return [
-            self.browser.text(el) for el in self.browser.elements(self.ITEMS_LOCATOR)]
+        return [self.browser.text(el) for el in self.browser.elements(self.ITEMS_LOCATOR)]
 
     def has_item(self, item):
         """Returns whether the items exists.
