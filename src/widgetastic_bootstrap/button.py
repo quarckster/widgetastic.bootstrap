@@ -1,3 +1,5 @@
+from itertools import chain
+
 from widgetastic.log import call_sig
 from widgetastic.xpath import quote
 from widgetastic.widget import ClickableMixin, Widget
@@ -44,7 +46,7 @@ class Button(Widget, ClickableMixin):
         Widget.__init__(self, parent, logger=logger)
         self.args = text
         self.kwargs = kwargs
-        classes = kwargs.pop("classes", [])
+        self.classes = kwargs.pop("classes", [])
         if text:
             if kwargs:  # classes should have been the only kwarg combined with text args
                 raise TypeError("If you pass button text then only pass classes in addition")
@@ -59,12 +61,12 @@ class Button(Widget, ClickableMixin):
             self.locator_conditions = " and ".join(
                 "@{}={}".format(attr, quote(value)) for attr, value in kwargs.items())
 
-        if classes:
+        if self.classes:
             if self.locator_conditions:
                 self.locator_conditions += " and "
             self.locator_conditions += " and ".join(
                 "contains(@class, {})".format(quote(klass))
-                for klass in classes)
+                for klass in self.classes)
         if self.locator_conditions:
             self.locator_conditions = "and ({})".format(self.locator_conditions)
 
@@ -84,7 +86,12 @@ class Button(Widget, ClickableMixin):
                 self.browser.get_attribute("disabled", self) == "true")
 
     def __repr__(self):
-        return "{}{}".format(type(self).__name__, call_sig(self.args, self.kwargs))
+        if self.classes:
+            classes = {"classes": self.classes}
+        else:
+            classes = {}
+        kwarg_dict = dict(chain(self.kwargs.items(), classes.items()))
+        return "{}{}".format(type(self).__name__, call_sig(self.args, kwarg_dict))
 
     @property
     def title(self):
